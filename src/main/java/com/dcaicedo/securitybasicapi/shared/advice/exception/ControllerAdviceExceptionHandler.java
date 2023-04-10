@@ -1,4 +1,4 @@
-package com.dcaicedo.securitybasicapi.shared.advice;
+package com.dcaicedo.securitybasicapi.shared.advice.exception;
 
 import com.dcaicedo.securitybasicapi.shared.http.GenericHttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -38,6 +38,8 @@ public class ControllerAdviceExceptionHandler extends ResponseEntityExceptionHan
                 .forEach(genericHttpResponse.getErrors()::add);
         return new ResponseEntity<Object>(genericHttpResponse, genericHttpResponse.getStatus());
     }
+
+
 
     @ExceptionHandler(value = {RuntimeException.class})
     public ResponseEntity<GenericHttpResponse> handleException(RuntimeException ex) {

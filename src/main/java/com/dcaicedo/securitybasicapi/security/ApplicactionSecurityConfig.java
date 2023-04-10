@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,8 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static com.dcaicedo.securitybasicapi.security.ApplicationUserRole.ADMIN;
-import static com.dcaicedo.securitybasicapi.security.ApplicationUserRole.USER;
+import static com.dcaicedo.securitybasicapi.security.ApplicationUserRole.*;
+import static com.dcaicedo.securitybasicapi.security.ApplicationUserPermission.*;
 
 /**
  * <p>
@@ -29,6 +30,7 @@ import static com.dcaicedo.securitybasicapi.security.ApplicationUserRole.USER;
 @Slf4j
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class ApplicactionSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -48,15 +50,16 @@ public class ApplicactionSecurityConfig extends WebSecurityConfigurerAdapter {
      * @param http
      * @throws Exception
      */
-    @Override protected void configure(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
-                //     .csrf()
-                //    .disable()
+                .csrf()
+                .disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/v1/auth/**")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/**/demo/user").hasRole(USER.name())
-                .antMatchers(HttpMethod.GET, "/api/**/demo/admin").hasRole(ADMIN.name())
+                .antMatchers(HttpMethod.GET, "/api/**/demo/user").hasAnyRole(USER.name(), ADMIN.name())
+               // .antMatchers(HttpMethod.GET, "/api/**/demo/admin").hasAnyAuthority(ADMIN_GET.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -79,13 +82,14 @@ public class ApplicactionSecurityConfig extends WebSecurityConfigurerAdapter {
                 User.builder()
                         .username("daniel")
                         .password(passwordEncoder.encode("password"))
-                        .roles(USER.name())
+                        .roles(USER.name()) // ROLE_USER
                         .build();
         UserDetails userDetails2 =
                 User.builder().
                         username("elias")
                         .password(passwordEncoder.encode("password"))
                         .roles(ADMIN.name())
+                        .authorities(ADMIN.getAuthorities())
                         .build();
         UserDetails userDetails3 =
                 User.builder()

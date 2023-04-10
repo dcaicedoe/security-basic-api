@@ -3,6 +3,8 @@ package com.dcaicedo.securitybasicapi.demo;
 import com.dcaicedo.securitybasicapi.shared.http.GenericHttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +50,7 @@ public class DemoController {
      * </p>
      * @return Respuesta generica con estado OK en caso de que la peticion fuera realizada por un usuario con rol ADMIN
      */
+    @PostAuthorize("hasAnyAuthority('admin:insert','admin:get')")
     @GetMapping(
             value = "/admin"
     )
