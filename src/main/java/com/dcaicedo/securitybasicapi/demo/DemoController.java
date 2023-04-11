@@ -50,7 +50,7 @@ public class DemoController {
      * </p>
      * @return Respuesta generica con estado OK en caso de que la peticion fuera realizada por un usuario con rol ADMIN
      */
-    @PostAuthorize("hasAnyAuthority('admin:insert','admin:get')")
+    @PreAuthorize("hasAnyAuthority('admin:insert','admin:get')")
     @GetMapping(
             value = "/admin"
     )
